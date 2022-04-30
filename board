@@ -1,0 +1,36 @@
+# object class of each chromosome in the population
+class Board:
+    def __init__(self, board):
+        self._board = board
+        self._core = None
+        self._history = None
+        self._fitness = 0
+        self._stats = None
+        self._parents = [0,0,0]
+        self._recombination = [0,0]
+        self._mutation = [(-1,-1),(-1,-1)]
+
+    
+    def set_history(self, history):
+        self._history = history
+        
+    def set_core(self, core):
+        custom_lf = lf.Custom(core)
+        self._board.add(custom_lf, loc=(30,30))
+        self._core = np.copy(core)
+        
+    def set_fitness(self, fitness):
+        self._fitness = fitness
+        
+    def set_stats(self, stats):
+        self._stats = stats
+        
+    def set_parents(self, parents):
+        self._parents = np.copy([population[parents[0]]._core, population[parents[1]]._core, population[parents[2]]._core])
+    
+    def set_recombination(self, recombination):
+        self._recombination = np.copy(recombination)
+        
+    def set_mutation(self, mutation):
+        self._mutation = np.copy(mutation)
+        
