@@ -1,0 +1,96 @@
+# Interactive part of the program
+
+#handles choice for interactivity
+def choose(n):
+    try:
+        c = int(input())
+        while(c<1 or c>n):
+            print("Invalid number, try again: ")
+            c = int(input())
+        return c
+    except:
+        print("Non valid argument. Try again: ")
+        choice()
+
+#returns the number of iterations and board size for the anumations
+def find_parameters(board_len):
+    iteration = 0
+    board_len = 0
+    if choice == 0:
+        iterations = 1300
+        board_len = 100
+    elif choice == 1:
+        iterations = 1300
+        board_len = 100
+    elif choice == 2:
+        iterations = 500
+        board_len = 100
+    elif choice == 3:
+        iterations = 1500
+        board_len = 100
+    elif choice == 4:
+        iterations = 150
+        board_len = 40
+    else:
+        iterations = 150
+        board_len = 50
+    return iterations, board_len
+
+#simulates the run of the algorithm in case user chose 2
+def simulate():
+    #initializes the population
+    init_population()
+    calc_population_data()
+    #holds data for plotting
+    generations = [i for i in range(NUM_OF_GENERATIONS)]
+    fitness = [0 for j in range(NUM_OF_GENERATIONS)]
+    life_span = [0 for j in range(NUM_OF_GENERATIONS)]
+    maximum_size = [0 for j in range(NUM_OF_GENERATIONS)]
+    init_size = [0 for j in range(NUM_OF_GENERATIONS)]
+    #runs the generations
+    for generation in range(NUM_OF_GENERATIONS):
+        breed() #breeds this population to generate the next
+        cycle_of_life() # moves to the next generation
+        #prints and saves data
+        max_size = population[0]._stats["peak_cell_coverage"] * BOARD_LEN**2
+        print("---------------------------------------------------------------------------------------------------------------------")
+        print("generation " + str(generation) + ":")
+        print("best life span = " + str(get_life_span(population[0]._history)) + ", best max size = " + str(max_size))
+        print("population chromosome fitness: ", end = '')
+        print([chromosome._fitness for chromosome in population])
+        fitness[generation] = population[0]._fitness
+        life_span[generation] = get_life_span(population[0]._history)
+        maximum_size[generation] = max_size
+        init_size[generation] = sg.utils.statistics.cell_coverage(population[0]._history[0]) * BOARD_LEN**2
+    
+    #plots parameters for the run
+    plt.plot(generations, fitness, label = "fitness")
+    plt.plot(generations, life_span, label = "life span")
+    plt.plot(generations, maximum_size, label = "maximum size")
+    plt.plot(generations, init_size, label = "initial_size")
+    plt.title("parameters' values")
+    plt.legend()
+    plt.plot()
+    to_show.add(lf.Custom(population[0]._core), loc = (50, 50))
+
+#main - interaction with the user    
+print("Press 1 to see interesting methuselahs found by the algorithm, 2 to find new methuselahs with evolution (2 might take time): ")   
+choice = int(choose(2))
+if(choice == 1): #chosen to see methuselahs
+    print("Enter which methuselah would you like to see:")
+    print("1 - a version of r-pentamino \n2 - cool methuselah\n3 - symetrical methuselah\n4 - another cool metushelah\n5 - disappearing ninja\n6 - bonus - flight of the bird")
+    choice = int(choose(6))-1
+    iterations, board_len = find_parameters(choice-1)
+    BOARD_LEN = board_len
+    ITERATIONS = iterations
+    to_show = sg.Board(size=(BOARD_LEN,BOARD_LEN))
+    to_show.add(lf.Custom(methuselahs_core[choice]), loc = (int(BOARD_LEN/2), int(BOARD_LEN/2)))
+else:
+    print("This will take about 2 minutes...")
+    simulate()
+
+#simulates for both choices
+sim = sg.Simulator(to_show)
+stats = sim.run(sg.rules.conway_classic, iters=ITERATIONS)
+print("simulation might take a few seconds to show...")
+sim.animate()
