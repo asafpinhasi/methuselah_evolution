@@ -11,11 +11,19 @@ In general, genetic algorithms use a population of possible solutions for the pr
 In this program, every individual is a starting configuration. The fitness of each individual is calculated considering three parameters - the size of the initial configurations (number of living cells), the maximal size of the automata, and its life span. The parents are chosen using roulette choice, and the recombination is of three different boards (to avoid early convergence). To avoid losing good solutions, the programs saves the best solution from the previous generation to the next generation (elitism). In this fashion a fixed amount of generations evolve to produce a methuselah.
 
 The program:
-The user can choose whether to find a new methuselah with the algorithm (takes some time) or to see solutions from previous runs of the algorithm. The first choice presents a graph of the evolution of the population, and a simulation of the best methuselah from the population.
+The user can choose whether to see solutions from previous runs of the algorithm or to find a new methuselah with the algorithm (takes some time). The second choice presents a graph of the evolution of the population, and a simulation of the best methuselah produced by the algorithm.
 
-An example for an evolution running of the project:
+An example of a run from the second choice (evolution of a new methuselah):
+
 ![fitness parameters](https://user-images.githubusercontent.com/87317007/166107994-aef27b63-9c63-4e7a-a227-93e1e9656cfb.png)
 
 An animation of a metuselah produced by this run of the program:
 
 ![](Animation.gif)
+
+An interesting behaviour of the genetic algotrithm is its flexibility to certain changes. For example, if you would prefer to produce different kinds 
+of configurations, all you need to do is change the fitness function. In one accasion I wanted to see methuselahs that both start and end with small configurations.
+So, I added the size of the final configuration to the denominator, and ran the program. The program produced the following methuselah:
+The disappearing ninja:
+
+
