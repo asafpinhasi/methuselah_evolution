@@ -1,0 +1,14 @@
+# Some settings to show a JS animation
+import matplotlib.pyplot as plt
+plt.rcParams["animation.html"] = "jshtml"
+
+# Imports used in project
+import seagull as sg
+import seagull.lifeforms as lf
+import numpy as np
+import random
+import copy
+import matplotlib
+import matplotlib.pyplot as plt
+from loguru import logger
+logger.remove()
