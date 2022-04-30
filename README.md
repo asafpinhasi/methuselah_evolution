@@ -24,6 +24,8 @@ An animation of a metuselah produced by this run of the program:
 An interesting behaviour of the genetic algotrithm is its flexibility to certain changes. For example, if you would prefer to produce different kinds 
 of configurations, all you need to do is change the fitness function. In one accasion I wanted to see methuselahs that both start and end with small configurations.
 So, I added the size of the final configuration to the denominator, and ran the program. The program produced the following methuselah:
+
 The disappearing ninja:
 
+![](Animation1.gif)
 
