@@ -1,0 +1,89 @@
+#breeds the population and regenerates it
+
+#returns the 2 fittest boards from the population, is used by breed()
+def get_fitest():
+    best = None
+    second_best = None
+    best_fitness = 0
+    second_best_fitness = 0
+    for chromosome in population:
+        if chromosome._fitness > best_fitness:
+            second_best = best
+            second_best_fitness = best_fitness
+            best = chromosome
+            best_fitness = chromosome._fitness
+        elif chromosome._fitness != best_fitness and chromosome._fitness > second_best_fitness:
+            second_best = chromosome
+            second_best_fitness = chromosome._fitness
+    return best, second_best
+
+# chooses 3 parents for breeding
+def roulette_triple_choice():  
+    population_fitness = sum(chromosome._fitness for chromosome in population)
+    chromosome_probabilities = [chromosome._fitness/population_fitness for chromosome in population]
+    parents = np.random.choice(a = np.arange(POPULATION_SIZE), p = chromosome_probabilities, size = 3, replace = False)
+    return parents
+
+# gives birth to a new born from 3 parents chosen by roulette
+def give_birth(marriage, parent1, parent2, parent3):
+    #gets a recombinant new born
+    core = recombination(marriage, parent1, parent2, parent3)
+    #allows 2 mutations to accur in the new born
+    mutation = [(-1,-1), (-1,-1)]
+    if 0.5 > random.uniform(0, 1):
+        x = random.randint(0, CORE_LEN-1)
+        y = random.randint(0, CORE_LEN-1)
+        core[x][y] = 1 - core[x][y]
+        mutation[0] = (x,y)
+    if 0.5 > random.uniform(0, 1):
+        x = random.randint(0, CORE_LEN-1)
+        y = random.randint(0, CORE_LEN-1)
+        core[x][y] = 1 - core[x][y]
+        mutation[1] = (x,y)
+    next_population[marriage].set_mutation(mutation)
+    return core
+
+#gets 3 parents and returns a triple recombination of them
+def recombination(marriage, parent1, parent2, parent3):
+    rec = np.random.choice(a = np.arange(CORE_LEN**2-1), size = 2, replace = False) # chooses randomly recombination sites
+    if rec[0] < rec[1]: #makes sure th recombination is in the right order
+        recombination_position1 = rec[0]
+        recombination_position2 = rec[1]
+    else:
+        recombination_position1 = rec[1]
+        recombination_position2 = rec[0]
+    core = np.zeros((CORE_LEN,CORE_LEN), dtype = int)
+    core1 = population[parent1]._core
+    core2 = population[parent2]._core
+    core3 = population[parent3]._core
+    counter = 0
+    for i in range(CORE_LEN): #copies the 3 parents core in the correct order and position
+        for j in range(CORE_LEN):
+            if counter < recombination_position1:
+                core[i][j] = core1[i][j]
+                counter += 1
+            elif counter < recombination_position2:
+                core[i][j] = core2[i][j]
+                counter += 1
+            else:
+                core[i][j] = core3[i][j]
+    next_population[marriage].set_recombination([recombination_position1,recombination_position2])
+    return core
+
+#gives birth to the whole next population - 2 best of the last populations, and the rest by regular breeding
+def breed():
+    best, second_best = get_fitest()
+    next_population[0] = copy.deepcopy(best)
+    next_population[1] = copy.deepcopy(second_best)
+    for marriage in range(2, POPULATION_SIZE):
+        parents = roulette_triple_choice()
+        next_population[marriage].set_parents(parents)
+        new_born = give_birth(marriage, parents[0],parents[1], parents[2])
+        next_population[marriage].set_core(new_born)
+
+#progresses to the next generation
+def cycle_of_life():
+    for chromosome in range(POPULATION_SIZE):
+        population[chromosome] = copy.deepcopy(next_population[chromosome])
+    
+    calc_population_data()
