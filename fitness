@@ -1,0 +1,41 @@
+# Calculates data regarding fitness of metuselahs
+
+#finds the cycle length of the automata (if exists) for the use of get_life_span
+def get_cycle_len(history):
+    cyclic = False
+    cycle_len = 1
+    #checks the length of a cycle if cyclic
+    while cycle_len < ITERATIONS and not cyclic:
+        if np.array_equal(history[-1],history[-cycle_len-1]): #checks for a identical conformation
+            cyclic = True
+        cycle_len += 1
+    if not cyclic:
+        cycle_len = 1
+    return cycle_len-1
+
+#calculates and returns the life span of an automata (until it settles). if it doesn't settle or is already cyclic returns 0 
+def get_life_span(history):
+    life_span = 0
+    cycle_len = get_cycle_len(history) 
+    if cycle_len > 0 and cycle_len < 50: #eliminates the effect of cyclic conformation because of the cyclic board
+        l = 0
+        reached_cycle = False
+        while l+cycle_len < ITERATIONS and not reached_cycle:
+            if np.array_equal(history[l],history[l+cycle_len]):
+                reached_cycle = True
+            l += 1
+        life_span = l+cycle_len-1
+    return life_span
+
+# calculates the fitness of an automata according to its life span, initial conformation and max size
+def get_fitness(board):
+    life_span = int(get_life_span(board._history))
+    max_size = board._stats["peak_cell_coverage"] * BOARD_LEN**2 # gets max size
+    init_size = sg.utils.statistics.cell_coverage(board._history[0]) * BOARD_LEN**2 # gets initial size
+    fitness = 0
+    if init_size != 0: #to avoid dividing by 0
+        fitness = (life_span + max_size*3 + 100)/init_size
+    if life_span == 0: #reduces the fitness of conformations that don't settle
+        fitness /= 2
+    return fitness
+ 
