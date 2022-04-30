@@ -1,5 +1,5 @@
-# metuselah_evolution
-The program implements a genetic algorithm to find impressive metuselahs in the game of life. 
+# methuselah_evolution
+The program implements a genetic algorithm to find impressive methuselahs in the game of life. 
 
 The Conway's game of life and methuselahs:
 The game of life is a cellular automata devised by John Conway. It is a two dimensional grid, where each cell can be in two cells - dead or alive. The cells change configurations according to a simple set of rules (for further information read - https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).
