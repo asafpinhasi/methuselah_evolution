@@ -1,0 +1,50 @@
+# Contains functions and constants to initiate the population and holds special configurations
+#parameters for the algorithm
+
+ITERATIONS = 1000 #number of iterations for each automata
+POPULATION_SIZE = 12 #number of automatas in each population
+NUM_OF_GENERATIONS = 8 # number of generations conceived and replaced 
+BOARD_LEN = 80
+CORE_LEN = 6 #length of the core of the automatas
+
+#helper board instance for the simulation
+to_show = sg.Board(size=(BOARD_LEN,BOARD_LEN))
+
+#special metushelahs
+methuselahs_core = []
+methuselahs_core.append([[1,1,1,0,0,1],[0,0,0,0,0,0],[0,0,0,0,0,1],[0,0,1,0,1,0],[0,0,0,1,0,1],[1,0,1,1,0,0]])
+methuselahs_core.append([[1,1,0,1,1],[0,1,0,0,1],[0,0,0,1,0],[1,1,1,0,0],[0,0,0,1,0]])
+methuselahs_core.append([[1,0,1,1,0,1],[1,0,0,0,1,0],[0,1,1,1,1,0],[1,0,0,0,0,0],[0,0,1,0,0,1],[1,0,0,0,1,1]])
+methuselahs_core.append([[0,0,1,0,1,0,0],[1,0,1,1,0,1,1],[1,1,0,0,0,1,0],[0,0,1,0,1,1,0],[0,1,1,0,0,1,0],[0,1,1,1,0,1,0],[1,1,0,0,1,0,1]])
+methuselahs_core.append([[0,1,1,1,0,0],[1,1,1,1,1,0],[1,0,0,0,0,0],[1,1,1,1,0,1],[0,1,0,1,0,0],[1,0,0,0,0,0]])
+methuselahs_core.append([[0,1,1,1,0,0],[1,1,0,1,1,0],[0,0,1,1,0,1],[0,0,0,0,0,0],[1,0,1,0,1,0],[1,0,0,0,0,0]])
+
+#holds the population of the current generation
+population = []
+for _ in range(POPULATION_SIZE):
+    board = sg.Board(size=(BOARD_LEN,BOARD_LEN))
+    population.append(Board(board))
+
+#holds the population of the current generation
+
+next_population = []
+for _ in range(POPULATION_SIZE):
+    board = sg.Board(size=(BOARD_LEN,BOARD_LEN))
+    next_population.append(Board(board))
+
+#initiates the population randomly
+def init_population():
+    for chromosome in population:
+        start = np.random.choice([0,1], size=(CORE_LEN,CORE_LEN))
+        chromosome.set_core(start)
+
+#calculates the data for the population
+def calc_population_data():
+    for chromosome in population:
+        sim = sg.Simulator(chromosome._board)
+        stats = sim.run(sg.rules.conway_classic, iters=ITERATIONS)
+        
+        chromosome.set_stats(stats)
+        chromosome.set_history(sim.get_history())
+        chromosome.set_fitness(get_fitness(chromosome))
+        
